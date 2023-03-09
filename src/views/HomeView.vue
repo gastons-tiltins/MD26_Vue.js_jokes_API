@@ -24,7 +24,7 @@ interface FavJokes {
 }
 
 interface Result {
-  id: string
+  _id?: number | undefined
   joke: string
 }
 
@@ -77,8 +77,7 @@ export default {
     },
     handleDelete(joke: string) {
       const jokeValueToFind = joke
-      const result: any = this.favData.find((item) => item.joke === jokeValueToFind)
-      console.log(result._id)
+      const result: Result = this.favData.find((item) => item.joke === jokeValueToFind)!
       axios.delete(`http://localhost:3004/jokes/${result._id}`)
       let index = this.favJokes.indexOf(joke)
       if (index !== -1) {
