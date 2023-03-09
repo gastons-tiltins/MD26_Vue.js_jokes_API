@@ -14,4 +14,4 @@ npm i
 npm run dev
 ```
 
-Backend repository: 
+Backend repository: https://github.com/gastons-tiltins/MD26.2_express_backend
