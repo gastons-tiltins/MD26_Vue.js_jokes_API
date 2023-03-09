@@ -11,7 +11,8 @@ interface FavJokes {
 export default {
   data() {
     return {
-      favData: [] as FavJokes[]
+      favData: [] as FavJokes[],
+      thirdImageSrc: 'delete.png'
     }
   },
   mounted() {
@@ -23,20 +24,30 @@ export default {
       .catch((error) => {
         error.message
       })
+  },
+  methods: {
+    handleDelete(_id: string) {
+      axios.delete(`http://localhost:3004/jokes/${_id}`)
+      this.favData = this.favData.filter((item) => item._id !== _id)
+      console.log('Joke deleted from favorites!')
+    }
   }
 }
 </script>
 <template>
   <div>
-    <h1>FAVORITES</h1>
+    <h1 class="is-size-4 has-text-centered">Your Favorite Jokes</h1>
     <!-- <p>{{ favData }}</p> -->
     <div>
-      <ul>
-        <li v-for="joke in favData" :key="joke._id">
-          {{ joke.joke }}
-          <!-- <button @click="handleClick(joke.joke)">Add to favorites</button> -->
-        </li>
-      </ul>
+      <div v-for="joke in favData" :key="joke._id" class="apply--flex">
+        <img
+          @click="handleDelete(joke._id)"
+          :src="thirdImageSrc"
+          style="width: 20px; height: auto; cursor: pointer"
+          alt="Favorite unselected."
+        />
+        <span>{{ joke.joke }}</span>
+      </div>
       <hr />
     </div>
   </div>

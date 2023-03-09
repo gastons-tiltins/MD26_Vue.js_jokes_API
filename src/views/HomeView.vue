@@ -1,6 +1,5 @@
 <script lang="ts">
 import axios from 'axios'
-import TestStuff from './TestStuff.vue'
 
 export interface Jokes {
   category: string
@@ -20,16 +19,23 @@ export interface Jokes {
 }
 
 interface FavJokes {
-  _id: string
+  id?: number
   joke: string
-  fav: boolean
+}
+
+interface Result {
+  id: string
+  joke: string
 }
 
 export default {
   data() {
     return {
       jokesData: [] as Jokes[],
-      favData: [] as FavJokes[]
+      favData: [] as FavJokes[],
+      favJokes: [] as string[],
+      firstImageSrc: 'fav-unselected.png',
+      secondImageSrc: 'fav-selected.png'
     }
   },
   mounted() {
@@ -46,30 +52,64 @@ export default {
       .get('http://localhost:3004/jokes')
       .then((response) => {
         this.favData = response.data
+        this.favData.forEach((joke) => {
+          this.favJokes.push(joke.joke)
+        })
       })
       .catch((error) => {
         error.message
       })
   },
   methods: {
-    handleClick(joke: string) {
+    handleAddFav(joke: string) {
+      axios.post('http://localhost:3004/jokes', { joke }).then((response) => {
+        axios
+          .get('http://localhost:3004/jokes')
+          .then((response) => {
+            this.favData = response.data
+          })
+          .catch((error) => {
+            error.message
+          })
+      })
+      this.favJokes = [...this.favJokes, joke]
       console.log('Joke added to favorites!')
-      axios.post('http://localhost:3004/jokes', { joke, fav: true })
+    },
+    handleDelete(joke: string) {
+      const jokeValueToFind = joke
+      const result: any = this.favData.find((item) => item.joke === jokeValueToFind)
+      console.log(result._id)
+      axios.delete(`http://localhost:3004/jokes/${result._id}`)
+      let index = this.favJokes.indexOf(joke)
+      if (index !== -1) {
+        this.favJokes.splice(index, 1)
+      }
     }
   }
 }
 </script>
 <template>
   <div>
-    <h1>HOME</h1>
-    <!-- {{ jokesData }} -->
-    <p>{{ favData }}</p>
-    <ul>
-      <li v-for="joke in jokesData" :key="joke.id">
-        {{ joke.joke }}
-        <button @click="handleClick(joke.joke)">Add to favorites</button>
-      </li>
-    </ul>
+    <h1 class="is-size-4 has-text-centered">Home</h1>
+    <div>
+      <div v-for="joke in jokesData" :key="joke.id" class="apply--flex">
+        <img
+          v-if="!favJokes.includes(joke.joke)"
+          :src="firstImageSrc"
+          style="width: 20px; height: auto; cursor: pointer"
+          alt="Favorite unselected."
+          @click="handleAddFav(joke.joke)"
+        />
+        <img
+          v-if="favJokes.includes(joke.joke)"
+          :src="secondImageSrc"
+          style="width: 20px; height: auto; cursor: pointer"
+          alt="Favorite unselected."
+          @click="handleDelete(joke.joke)"
+        />
+        <span>{{ joke.joke }}</span>
+      </div>
+    </div>
     <hr />
   </div>
 </template>

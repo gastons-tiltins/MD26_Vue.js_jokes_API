@@ -1,3 +1,4 @@
+@import 'https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css';
 @import './base.css';
 
 #app {
@@ -45,4 +46,12 @@ a,
 .header--style {
   margin: 0px;
   padding-bottom: 10px;
+}
+
+.apply--flex {
+  display: flex;
+  align-items: center;
+  /* background-color: lightblue; */
+  gap: 10px;
+  margin: 10px 0px;
 }
