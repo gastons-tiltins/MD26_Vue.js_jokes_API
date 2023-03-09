@@ -5,6 +5,7 @@ Preview:
 ![preview](./preview.png)
 
 Instructions:
+You have to have Node.js installed, then:
 
 ```
 npm i
